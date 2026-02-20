@@ -1,0 +1,40 @@
+2026/02/19 12:46:51 handlers_users.go:73: User registered successfully: b911ba59-4ce2-42a5-8746-acb2e8c7404d
+2026/02/19 12:46:59 main.go:55: Incorrect use, expected 'register <user> <password>
+2026/02/19 12:48:40 main.go:55: Incorrect use, expected 'login <user> <password>
+2026/02/19 12:48:42 main.go:55: Incorrect use, expected 'login <user> <password>
+2026/02/19 12:49:51 main.go:47: Not enough arguments provided
+2026/02/19 12:51:18 main.go:48: Not enough arguments provided
+2026/02/19 12:51:32 main.go:57: Incorrect use, expected 'login <user> <password>
+2026/02/19 12:52:23 main.go:58: Incorrect use, expected 'login <user> <password>
+2026/02/19 12:52:45 handlers_users.go:23: User steve is not registered
+2026/02/19 13:11:04 main.go:58: Incorrect use, expected 'register <user> <password>
+2026/02/19 13:13:21 handlers_users.go:35: User registered successfully: 2df96021-ba9a-4ba2-ae9f-cd922c227cfa
+2026/02/19 13:16:18 main.go:58: Password does not match
+2026/02/19 13:16:20 handlers_users.go:58: User slip logged in.
+2026/02/19 13:26:11 main.go:58: Incorrect use, expected 'reset <table>
+2026/02/19 13:27:07 main.go:58: No table named me
+2026/02/19 13:27:18 main.go:58: No table named me
+2026/02/20 12:56:42 main.go:53: command not found
+2026/02/20 12:56:45 main.go:53: Incorrect use, expected 'user <login|register|users> [args]'
+2026/02/20 12:57:01 users.go:36: User registered successfully: slip:be07c42d-cb26-4b61-958e-af96e30bc692
+2026/02/20 12:57:09 main.go:53: Incorrect use, expected 'user login <user> <password>'
+2026/02/20 12:57:14 users.go:59: User slip logged in.
+2026/02/20 16:04:16 users.go:36: User registered successfully: steve:560fbe66-be18-4be5-ad02-c7c070a8b81f
+2026/02/20 16:04:34 users.go:59: User slip logged in.
+2026/02/20 16:33:27 fragrances.go:35: Fragrance added successfully: amouage - reflection man
+2026/02/20 16:34:08 fragrances.go:35: Fragrance added successfully: prada - luna rossa carbon
+2026/02/20 16:34:31 fragrances.go:35: Fragrance added successfully: louis vuitton - pacific chill
+2026/02/20 16:34:51 fragrances.go:35: Fragrance added successfully: jean paul gaultier - le male le parfum
+2026/02/20 16:35:23 fragrances.go:35: Fragrance added successfully: jean paul gaultier - le beau paradise garden
+2026/02/20 16:35:38 fragrances.go:35: Fragrance added successfully: versace - eros
+2026/02/20 16:36:04 fragrances.go:35: Fragrance added successfully: azzaro - the most wanted parfum
+2026/02/20 16:36:18 fragrances.go:35: Fragrance added successfully: rabanne - 1 million elixir
+2026/02/20 16:36:37 fragrances.go:35: Fragrance added successfully: yves saint laurent - la nuit de l homme
+2026/02/20 16:36:51 fragrances.go:35: Fragrance added successfully: bvlgari - aqva amara
+2026/02/20 16:37:28 fragrances.go:35: Fragrance added successfully: mercedes-benz - club black edt
+2026/02/20 17:04:37 fragrances.go:35: Fragrance added successfully: test - test
+2026/02/20 17:04:48 main.go:53: Incorrect use, expected 'user register <user> <password>'
+2026/02/20 17:05:40 fragrances.go:46: Fragrance added successfully: {11 mercedes-benz club black edt}
+2026/02/20 17:21:17 main.go:53: Unknown fragrance command 'update'. Expected one of: add, remove, update, list
+2026/02/20 17:24:12 main.go:53: Incorrect use, expected 'fragrance update <id> <brand> <name>'
+2026/02/20 17:24:24 fragrances.go:64: Fragrance updated: {12 mercedes-benz club black edt}

@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"os"
 
@@ -10,12 +11,13 @@ import (
 	"github.com/slikasp/fragrancetrackgo/internal/database"
 )
 
-type state struct {
-	db  *database.Queries
-	cfg *config.Config
-}
-
 func main() {
+	logFile, err := setupLogging("app.log")
+	if err != nil {
+		log.Fatalf("failed to setup logging: %v", err)
+	}
+	defer logFile.Close()
+
 	// Read config
 	cfg, err := config.Read()
 	if err != nil {
@@ -27,9 +29,9 @@ func main() {
 	dbQueries := database.New(db)
 
 	// Create state to be passed to functions
-	stt := &state{
-		db:  dbQueries,
-		cfg: &cfg,
+	stt := &config.State{
+		Db:  dbQueries,
+		Cfg: &cfg,
 	}
 
 	cmds := registerCommands()
@@ -38,6 +40,7 @@ func main() {
 
 	// Parse command input
 	if len(os.Args) < 2 {
+		fmt.Println("Not enough arguments provided")
 		log.Fatal("Not enough arguments provided")
 	}
 
@@ -46,6 +49,7 @@ func main() {
 
 	err = cmds.run(stt, command{Name: cmdName, Args: cmdArgs})
 	if err != nil {
+		fmt.Println(err)
 		log.Fatal(err)
 	}
 }

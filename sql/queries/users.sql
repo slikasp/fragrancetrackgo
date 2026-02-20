@@ -12,7 +12,7 @@ RETURNING *;
 -- name: GetUser :one
 SELECT * 
 FROM users 
-WHERE name = $1::text;
+WHERE name = $1;
 
 -- name: GetUsers :many
 SELECT name FROM users;
@@ -30,4 +30,4 @@ WHERE id = $1
 RETURNING *;
 
 -- name: ResetUsers :exec
-DELETE FROM users;
+DELETE FROM users WHERE is_admin = 'f';

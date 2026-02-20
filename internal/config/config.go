@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+
+	"github.com/slikasp/fragrancetrackgo/internal/database"
 )
 
 const configFileName = ".ftgconfig.json"
@@ -11,6 +13,11 @@ const configFileName = ".ftgconfig.json"
 type Config struct {
 	DbURL           string `json:"db_url"`
 	CurrentUserName string `json:"current_user_name"`
+}
+
+type State struct {
+	Db  *database.Queries
+	Cfg *Config
 }
 
 func getConfigFilePath() (string, error) {

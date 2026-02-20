@@ -10,6 +10,12 @@ import (
 	"github.com/google/uuid"
 )
 
+type Fragrance struct {
+	ID    int32
+	Brand string
+	Name  string
+}
+
 type User struct {
 	ID             uuid.UUID
 	CreatedAt      time.Time
