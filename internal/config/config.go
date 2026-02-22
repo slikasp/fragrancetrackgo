@@ -5,27 +5,30 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/google/uuid"
 	"github.com/slikasp/fragrancetrackgo/internal/database"
 )
 
-const configFileName = ".ftgconfig.json"
+const configFileName = "appconfig.json"
 
 type Config struct {
-	DbURL           string `json:"db_url"`
-	CurrentUserName string `json:"current_user_name"`
+	UserDbURL      string    `json:"user_db_url"`
+	FragranceDbURL string    `json:"fragrance_db_url"`
+	CurrentUser    uuid.UUID `json:"current_user"`
 }
 
 type State struct {
-	Db  *database.Queries
-	Cfg *Config
+	Users      *database.Queries
+	Fragrances *database.Queries
+	Cfg        *Config
 }
 
 func getConfigFilePath() (string, error) {
-	homeDir, err := os.UserHomeDir()
+	currentDir, err := os.Getwd()
 	if err != nil {
 		return "", err
 	}
-	path := filepath.Join(homeDir, configFileName)
+	path := filepath.Join(currentDir, configFileName)
 	return path, nil
 }
 
@@ -53,9 +56,10 @@ func Read() (Config, error) {
 	return cfg, nil
 }
 
-func (c Config) SetUser(userName string) error {
+func (c Config) SetUser(user uuid.UUID) error {
+
 	// Set the user variable to input
-	c.CurrentUserName = userName
+	c.CurrentUser = user
 	// Update the config file
 	j, err := json.Marshal(c)
 	if err != nil {

@@ -5,15 +5,19 @@
 package database
 
 import (
+	"database/sql"
 	"time"
 
 	"github.com/google/uuid"
 )
 
-type Fragrance struct {
-	ID    int32
-	Brand string
-	Name  string
+type Rating struct {
+	ID      int32
+	Brand   string
+	Name    string
+	UserID  uuid.UUID
+	Rating  sql.NullInt32
+	Comment sql.NullString
 }
 
 type User struct {

@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"strconv"
 
 	"github.com/slikasp/fragrancetrackgo/handlers"
 	"github.com/slikasp/fragrancetrackgo/internal/config"
@@ -13,7 +12,7 @@ import (
 
 // USERS
 
-func cmdHandlerUser(s *config.State, cmd command) error {
+func cmdHandlerUsers(s *config.State, cmd command) error {
 	if len(cmd.Args) < 1 {
 		return fmt.Errorf("Incorrect use, expected 'user <login|register|list> [args]'")
 	}
@@ -73,94 +72,94 @@ func cmdHandlerUserList(s *config.State, cmd command) error {
 	return handlers.UserList(s)
 }
 
-// FRAGRANCES
+// RATINGS
 
-func cmdHandlerFragrance(s *config.State, cmd command, user database.User) error {
-	if len(cmd.Args) < 1 {
-		return fmt.Errorf("Incorrect use, expected 'fragrance <add|remove|update|list> [args]'")
-	}
+// func cmdHandlerRatings(s *config.State, cmd command, user database.User) error {
+// 	if len(cmd.Args) < 1 {
+// 		return fmt.Errorf("Incorrect use, expected 'fragrance <add|remove|update|list> [args]'")
+// 	}
 
-	subcmd := cmd.Args[0]
-	args := cmd.Args[1:]
+// 	subcmd := cmd.Args[0]
+// 	args := cmd.Args[1:]
 
-	// TODO: make this dynamic type and list of values
-	switch subcmd {
-	case "add":
-		return cmdHandlerFragranceAdd(s, command{Name: "add", Args: args})
-	case "remove":
-		return cmdHandlerFragranceRemove(s, command{Name: "remove", Args: args})
-	case "update":
-		return cmdHandlerFragranceUpdate(s, command{Name: "update", Args: args})
-	case "list":
-		return cmdHandlerFragranceList(s, command{Name: "list", Args: args})
-	default:
-		return fmt.Errorf("Unknown fragrance command '%s'. Expected one of: add, remove, update, list", subcmd)
-	}
-}
+// 	// TODO: make this dynamic type and list of values
+// 	switch subcmd {
+// 	case "add":
+// 		return cmdHandlerRatingAdd(s, command{Name: "add", Args: args})
+// 	case "remove":
+// 		return cmdHandlerRatingRemove(s, command{Name: "remove", Args: args})
+// 	case "update":
+// 		return cmdHandlerRatingUpdate(s, command{Name: "update", Args: args})
+// 	case "list":
+// 		return cmdHandlerRatingList(s, command{Name: "list", Args: args})
+// 	default:
+// 		return fmt.Errorf("Unknown fragrance command '%s'. Expected one of: add, remove, update, list", subcmd)
+// 	}
+// }
 
-func cmdHandlerFragranceAdd(s *config.State, cmd command) error {
-	if len(cmd.Args) != 2 {
-		return fmt.Errorf("Incorrect use, expected 'fragrance add <brand> <name>'")
-	}
-	brand := cmd.Args[0]
-	name := cmd.Args[1]
+// func cmdHandlerRatingAdd(s *config.State, cmd command) error {
+// 	if len(cmd.Args) != 2 {
+// 		return fmt.Errorf("Incorrect use, expected 'fragrance add <brand> <name>'")
+// 	}
+// 	brand := cmd.Args[0]
+// 	name := cmd.Args[1]
 
-	err := handlers.FragranceAdd(s, brand, name)
-	if err != nil {
-		return err
-	}
+// 	err := handlers.RatingAdd(s, brand, name)
+// 	if err != nil {
+// 		return err
+// 	}
 
-	fmt.Printf("Fragrance %s - %s added successfully.\n", brand, name)
-	return nil
-}
+// 	fmt.Printf("Fragrance %s - %s added successfully.\n", brand, name)
+// 	return nil
+// }
 
-func cmdHandlerFragranceRemove(s *config.State, cmd command) error {
-	if len(cmd.Args) != 1 {
-		return fmt.Errorf("Incorrect use, expected 'fragrance remove <id>'")
-	}
-	v, err := strconv.ParseInt(cmd.Args[0], 10, 32)
-	if err != nil {
-		return err
-	}
-	id := int32(v)
+// func cmdHandlerRatingRemove(s *config.State, cmd command) error {
+// 	if len(cmd.Args) != 1 {
+// 		return fmt.Errorf("Incorrect use, expected 'fragrance remove <id>'")
+// 	}
+// 	v, err := strconv.ParseInt(cmd.Args[0], 10, 32)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	id := int32(v)
 
-	err = handlers.FragranceRemove(s, id)
-	if err != nil {
-		return err
-	}
+// 	err = handlers.RatingRemove(s, id)
+// 	if err != nil {
+// 		return err
+// 	}
 
-	fmt.Printf("Fragrance with ID %d removed successfully.\n", id)
-	return nil
-}
+// 	fmt.Printf("Fragrance with ID %d removed successfully.\n", id)
+// 	return nil
+// }
 
-func cmdHandlerFragranceUpdate(s *config.State, cmd command) error {
-	if len(cmd.Args) != 3 {
-		return fmt.Errorf("Incorrect use, expected 'fragrance update <id> <brand> <name>'")
-	}
-	v, err := strconv.ParseInt(cmd.Args[0], 10, 32)
-	if err != nil {
-		return err
-	}
-	id := int32(v)
-	brand := cmd.Args[1]
-	name := cmd.Args[2]
+// func cmdHandlerRatingUpdate(s *config.State, cmd command) error {
+// 	if len(cmd.Args) != 3 {
+// 		return fmt.Errorf("Incorrect use, expected 'fragrance update <id> <brand> <name>'")
+// 	}
+// 	v, err := strconv.ParseInt(cmd.Args[0], 10, 32)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	id := int32(v)
+// 	brand := cmd.Args[1]
+// 	name := cmd.Args[2]
 
-	err = handlers.FragranceUpdate(s, id, brand, name)
-	if err != nil {
-		return err
-	}
+// 	err = handlers.RatingUpdate(s, id, brand, name)
+// 	if err != nil {
+// 		return err
+// 	}
 
-	fmt.Printf("Fragrance with ID %d updated successfully.\n", id)
-	return nil
-}
+// 	fmt.Printf("Fragrance with ID %d updated successfully.\n", id)
+// 	return nil
+// }
 
-func cmdHandlerFragranceList(s *config.State, cmd command) error {
-	if len(cmd.Args) != 0 {
-		return fmt.Errorf("Incorrect use, expected 'fragrance list'")
-	}
+// func cmdHandlerRatingList(s *config.State, cmd command) error {
+// 	if len(cmd.Args) != 0 {
+// 		return fmt.Errorf("Incorrect use, expected 'fragrance list'")
+// 	}
 
-	return handlers.FragranceList(s)
-}
+// 	return handlers.RatingList(s)
+// }
 
 // DB
 

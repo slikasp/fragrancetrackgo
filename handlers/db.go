@@ -8,7 +8,7 @@ import (
 )
 
 func ResetUsers(s *config.State) error {
-	err := s.Db.ResetUsers(context.Background())
+	err := s.Users.ResetUsers(context.Background())
 	if err != nil {
 		return fmt.Errorf("Could not clear users table: %v\n", err)
 	}

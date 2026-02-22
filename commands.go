@@ -44,9 +44,9 @@ func registerCommands() commands {
 
 	// No login required
 	// User commands
-	cmds.register("user", cmdHandlerUser)
+	cmds.register("user", cmdHandlerUsers)
 
-	cmds.register("fragrance", middlewareLoggedInAdmin(cmdHandlerFragrance))
+	// cmds.register("fragrance", middlewareLoggedInAdmin(cmdHandlerRatings))
 	// Fragrances (should only be used by admins, maybe via API)
 	// add brand name
 	// remove brand name

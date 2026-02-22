@@ -24,19 +24,28 @@ func main() {
 		log.Fatalf("error reading config: %v", err)
 	}
 
-	// Load the database
-	db, err := sql.Open("postgres", cfg.DbURL)
-	dbQueries := database.New(db)
+	// Load databases
+	userDB, err := sql.Open("postgres", cfg.UserDbURL)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fragranceDB, err := sql.Open("postgres", cfg.FragranceDbURL)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Create DB query instances
+	userQueries := database.New(userDB)
+	fragranceQueries := database.New(fragranceDB)
 
 	// Create state to be passed to functions
 	stt := &config.State{
-		Db:  dbQueries,
-		Cfg: &cfg,
+		Users:      userQueries,
+		Fragrances: fragranceQueries,
+		Cfg:        &cfg,
 	}
 
 	cmds := registerCommands()
-
-	// runREPL()
 
 	// Parse command input
 	if len(os.Args) < 2 {
