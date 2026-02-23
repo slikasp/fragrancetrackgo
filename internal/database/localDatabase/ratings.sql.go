@@ -3,7 +3,7 @@
 //   sqlc v1.30.0
 // source: ratings.sql
 
-package database
+package localDatabase
 
 import (
 	"context"

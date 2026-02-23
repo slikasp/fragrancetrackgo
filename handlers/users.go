@@ -2,91 +2,80 @@ package handlers
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 	"fmt"
-	"log"
+	"strings"
 
+	"github.com/google/uuid"
 	"github.com/slikasp/fragrancetrackgo/internal/auth"
-	"github.com/slikasp/fragrancetrackgo/internal/config"
-	"github.com/slikasp/fragrancetrackgo/internal/database"
+	"github.com/slikasp/fragrancetrackgo/internal/database/localDatabase"
 )
 
-func UserRegister(s *config.State, name, pass string) error {
-	// Check if user exists
-	exits, _ := s.Users.GetUserByName(context.Background(), name)
-	if exits.Name == name {
-		return fmt.Errorf("User %s already exists", name)
+func UserRegister(ctx context.Context, users UserStore, name, pass string) (localDatabase.User, error) {
+	name = strings.TrimSpace(name)
+	if name == "" || pass == "" {
+		return localDatabase.User{}, ErrInvalidInput
 	}
-	// Create new user
+
+	_, err := users.GetUserByName(ctx, name)
+	if err == nil {
+		return localDatabase.User{}, ErrUserAlreadyExists
+	}
+	// Any lookup error besides "not found" is treated as infrastructure failure.
+	if !errors.Is(err, sql.ErrNoRows) {
+		return localDatabase.User{}, fmt.Errorf("lookup user by name: %w", err)
+	}
+
+	// Store only hashed passwords
 	hpass, err := auth.HashPassword(pass)
 	if err != nil {
-		log.Println(err)
-		return fmt.Errorf("Failed to hash the password.")
+		return localDatabase.User{}, fmt.Errorf("hash password: %w", err)
 	}
-	newUser, err := s.Users.CreateUser(context.Background(), database.CreateUserParams{
+
+	newUser, err := users.CreateUser(ctx, localDatabase.CreateUserParams{
 		Name:           name,
 		HashedPassword: hpass,
 	})
 	if err != nil {
-		log.Println(err)
-		return fmt.Errorf("Could not add user %s to database", name)
+		return localDatabase.User{}, fmt.Errorf("create user %q: %w", name, err)
 	}
 
-	// Set new user to current user
-	s.Cfg.SetUser(newUser.ID)
-
-	log.Printf("User registered: %v:%v\n", newUser.Name, newUser.ID)
-
-	return nil
+	return newUser, nil
 }
 
-func UserLogin(s *config.State, name, pass string) error {
-	// Check if user exists
-	user, err := s.Users.GetUserByName(context.Background(), name)
-	if err != nil {
-		log.Println(err)
-		return fmt.Errorf("Could not find user %s", name)
+func UserLogin(ctx context.Context, users UserStore, name, pass string) (localDatabase.User, error) {
+	name = strings.TrimSpace(name)
+	if name == "" || pass == "" {
+		return localDatabase.User{}, ErrInvalidInput
 	}
 
-	// Check if password matches
+	user, err := users.GetUserByName(ctx, name)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return localDatabase.User{}, ErrInvalidCredential
+		}
+		return localDatabase.User{}, fmt.Errorf("lookup user by name: %w", err)
+	}
+
+	// Password hash comparison
 	match, err := auth.CheckPasswordHash(pass, user.HashedPassword)
 	if err != nil {
-		log.Println(err)
-		return fmt.Errorf("Could not check password for user %s", name)
+		return localDatabase.User{}, fmt.Errorf("check password hash: %w", err)
 	}
-	if match != true {
-		return fmt.Errorf("Password does not match")
-	}
-
-	err = s.Cfg.SetUser(user.ID)
-	if err != nil {
-		log.Println(err)
-		return fmt.Errorf("Could not set username %s", name)
+	if !match {
+		return localDatabase.User{}, ErrInvalidCredential
 	}
 
-	log.Printf("User %v logged in.\n", name)
-	return nil
+	return user, nil
 }
 
-func UserList(s *config.State) error {
-	users, err := s.Users.GetUsers(context.Background())
+// TODO: find a use for it (maybe admin console?) or get rid of it
+func UserList(ctx context.Context, users UserStore, currentUserID uuid.UUID) ([]string, error) {
+	names, err := users.GetUsers(ctx)
 	if err != nil {
-		log.Println(err)
-		return fmt.Errorf("Could not get existing users")
+		return nil, fmt.Errorf("list users: %w", err)
 	}
 
-	currentUser, err := s.Users.GetUserByID(context.Background(), s.Cfg.CurrentUser)
-	if err != nil {
-		log.Println(err)
-		return fmt.Errorf("Could not confirm current user")
-	}
-
-	for _, name := range users {
-		if name == currentUser.Name {
-			fmt.Printf("%s (current)\n", name)
-		} else {
-			fmt.Printf("%s\n", name)
-		}
-	}
-
-	return nil
+	return names, nil
 }

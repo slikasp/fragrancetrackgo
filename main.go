@@ -2,13 +2,12 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
-	"os"
 
 	_ "github.com/lib/pq"
 	"github.com/slikasp/fragrancetrackgo/internal/config"
-	"github.com/slikasp/fragrancetrackgo/internal/database"
+	"github.com/slikasp/fragrancetrackgo/internal/database/localDatabase"
+	"github.com/slikasp/fragrancetrackgo/internal/database/remoteDatabase"
 )
 
 func main() {
@@ -25,40 +24,28 @@ func main() {
 	}
 
 	// Load databases
-	userDB, err := sql.Open("postgres", cfg.UserDbURL)
+	userDB, err := sql.Open("postgres", cfg.LocalDbURL)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fragranceDB, err := sql.Open("postgres", cfg.FragranceDbURL)
+	fragranceDB, err := sql.Open("postgres", cfg.RemoteDbURL)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	// Create DB query instances
-	userQueries := database.New(userDB)
-	fragranceQueries := database.New(fragranceDB)
+	userQueries := localDatabase.New(userDB)
+	fragranceQueries := remoteDatabase.New(fragranceDB)
 
-	// Create state to be passed to functions
-	stt := &config.State{
-		Users:      userQueries,
-		Fragrances: fragranceQueries,
-		Cfg:        &cfg,
-	}
-
-	cmds := registerCommands()
-
-	// Parse command input
-	if len(os.Args) < 2 {
-		fmt.Println("Not enough arguments provided")
-		log.Fatal("Not enough arguments provided")
-	}
-
-	cmdName := os.Args[1]
-	cmdArgs := os.Args[2:]
-
-	err = cmds.run(stt, command{Name: cmdName, Args: cmdArgs})
+	// Create a webapp which holds current state and HTML templates
+	app, err := newWebApp(userQueries, fragranceQueries)
 	if err != nil {
-		fmt.Println(err)
+		log.Fatalf("failed to initialize templates: %v", err)
+	}
+
+	// Start web server
+	err = app.serve(":8080")
+	if err != nil {
 		log.Fatal(err)
 	}
 }

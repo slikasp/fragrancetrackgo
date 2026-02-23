@@ -3,90 +3,90 @@ package handlers
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
-	"log"
 	"strings"
 
-	"github.com/slikasp/fragrancetrackgo/internal/config"
-	"github.com/slikasp/fragrancetrackgo/internal/database"
+	"github.com/google/uuid"
+	"github.com/slikasp/fragrancetrackgo/internal/database/localDatabase"
 )
 
-// reuse this for Scores after migrations are remade
-// how hard would it be to get suggestions in cli after pressing tab? maybe just go to web app straight away?
+// create a new user-owned rating entry. Flow:
+// 1. Normalize brand/name (trim + lowercase) so lookups are consistent.
+// 2. Validate required keys.
+// 3. Check if an entry already exists for (user, brand, name).
+// 4. Insert the new record when no duplicate is found.
+func RatingAdd(ctx context.Context, store RatingStore, userID uuid.UUID, input RatingInput) (localDatabase.Rating, error) {
+	brand := strings.ToLower(strings.TrimSpace(input.Brand))
+	name := strings.ToLower(strings.TrimSpace(input.Name))
+	if brand == "" || name == "" {
+		return localDatabase.Rating{}, ErrInvalidInput
+	}
 
-func RatingAdd(s *config.State, brand, name, comment string, rating int32) error {
-	// TODO: maybe capitalise first letters? need to cover all edge cases (l'homme and so on)
-	// set all to lowercase
-	brand = strings.ToLower(brand)
-	name = strings.ToLower(name)
-
-	exits, _ := s.Users.GetRating(context.Background(), database.GetRatingParams{
-		UserID: s.Cfg.CurrentUser,
+	_, err := store.GetRating(ctx, localDatabase.GetRatingParams{
+		UserID: userID,
 		Brand:  brand,
 		Name:   name,
 	})
-	if exits.Name == name && exits.Brand == brand {
-		return fmt.Errorf("Fragrance %s - %s already exists with ID %d.\n", brand, name, exits.ID)
+	if err == nil {
+		return localDatabase.Rating{}, ErrRatingExists
+	}
+	// Any lookup error besides "not found" is an operational failure.
+	if !errors.Is(err, sql.ErrNoRows) {
+		return localDatabase.Rating{}, fmt.Errorf("lookup rating: %w", err)
 	}
 
-	newFrag, err := s.Users.AddRating(context.Background(), database.AddRatingParams{
-		Brand: brand,
-		Name:  name,
+	newFrag, err := store.AddRating(ctx, localDatabase.AddRatingParams{
+		UserID:  userID,
+		Brand:   brand,
+		Name:    name,
+		Rating:  input.Rating,
+		Comment: input.Comment,
 	})
 	if err != nil {
-		log.Println(err)
-		return fmt.Errorf("Could not add fragrance %s - %s to database.\n", brand, name)
+		return localDatabase.Rating{}, fmt.Errorf("add rating: %w", err)
 	}
 
-	log.Printf("Fragrance added: %s - %s\n", newFrag.Brand, newFrag.Name)
-
-	return nil
+	return newFrag, nil
 }
 
-func RatingRemove(s *config.State, brand, name string) error {
-	removedFrag, err := s.Users.RemoveRating(context.Background(), database.RemoveRatingParams{
-		UserID: s.Cfg.CurrentUser,
+// delete one rating identified by (user, brand, name) and return it
+func RatingRemove(ctx context.Context, store RatingStore, userID uuid.UUID, brand, name string) (localDatabase.Rating, error) {
+	removedFrag, err := store.RemoveRating(ctx, localDatabase.RemoveRatingParams{
+		UserID: userID,
 		Brand:  brand,
 		Name:   name,
 	})
 	if err != nil {
-		log.Println(err)
-		return fmt.Errorf("Could not remove fragrance %s - %s from database.\n", brand, name)
+		return localDatabase.Rating{}, fmt.Errorf("remove rating: %w", err)
 	}
 
-	log.Printf("Fragrance removed: %v\n", removedFrag)
-
-	return nil
+	return removedFrag, nil
 }
 
-func RatingUpdate(s *config.State, brand, name string, comment sql.NullString, rating sql.NullInt32) error {
-	updatedFrag, err := s.Users.UpdateRating(context.Background(), database.UpdateRatingParams{
-		UserID:  s.Cfg.CurrentUser,
+// update optional fields (comment/rating) on one rating row
+// sql.Null* types preserve "unset" semantics through to SQL
+func RatingUpdate(ctx context.Context, store RatingStore, userID uuid.UUID, brand, name string, comment sql.NullString, rating sql.NullInt32) (localDatabase.Rating, error) {
+	updatedFrag, err := store.UpdateRating(ctx, localDatabase.UpdateRatingParams{
+		UserID:  userID,
 		Brand:   brand,
 		Name:    name,
 		Rating:  rating,
 		Comment: comment,
 	})
 	if err != nil {
-		log.Println(err)
-		return fmt.Errorf("Could not update fragrance %s 0 %s \n", brand, name)
+		return localDatabase.Rating{}, fmt.Errorf("update rating: %w", err)
 	}
 
-	log.Printf("Fragrance updated: %v\n", updatedFrag)
-
-	return nil
+	return updatedFrag, nil
 }
 
-func RatingList(s *config.State) error {
-	frags, err := s.Users.GetRatings(context.Background(), s.Cfg.CurrentUser)
+// RatingList returns all ratings for a specific user
+func RatingList(ctx context.Context, store RatingStore, userID uuid.UUID) ([]localDatabase.Rating, error) {
+	frags, err := store.GetRatings(ctx, userID)
 	if err != nil {
-		log.Println(err)
-		return fmt.Errorf("Could not get existing users.\n")
+		return nil, fmt.Errorf("list ratings: %w", err)
 	}
 
-	for _, frag := range frags {
-		fmt.Printf("%d. %s - %s\n", frag.ID, frag.Brand, frag.Name)
-	}
-
-	return nil
+	return frags, nil
 }

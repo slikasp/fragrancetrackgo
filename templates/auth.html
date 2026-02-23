@@ -1,0 +1,30 @@
+{{define "auth_page"}}
+{{template "base_top" .}}
+
+<section class="card">
+  <h2>Account Access</h2>
+  <p class="muted">Create an account or sign in to manage your fragrance collection.</p>
+  <div id="auth-feedback"></div>
+  <div class="grid">
+    <form method="post" action="/auth/login" hx-post="/auth/login" hx-target="#auth-feedback" hx-swap="innerHTML">
+      <h3>Login</h3>
+      <label>Name</label>
+      <input type="text" name="name" required>
+      <label style="margin-top:0.5rem;display:block;">Password</label>
+      <input type="password" name="password" required>
+      <button style="margin-top:0.75rem;" type="submit">Login</button>
+    </form>
+
+    <form method="post" action="/auth/register" hx-post="/auth/register" hx-target="#auth-feedback" hx-swap="innerHTML">
+      <h3>Register</h3>
+      <label>Name</label>
+      <input type="text" name="name" required>
+      <label style="margin-top:0.5rem;display:block;">Password</label>
+      <input type="password" name="password" required>
+      <button style="margin-top:0.75rem;" type="submit">Register</button>
+    </form>
+  </div>
+</section>
+
+{{template "base_bottom" .}}
+{{end}}

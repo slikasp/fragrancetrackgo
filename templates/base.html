@@ -1,0 +1,160 @@
+{{define "base_top"}}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{.Title}}</title>
+  <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+  <style>
+    :root {
+      --bg: #f6f7f2;
+      --panel: #ffffff;
+      --text: #1f2933;
+      --muted: #5f6c7b;
+      --accent: #0b7285;
+      --line: #dde3e9;
+      --ok: #1b7f3a;
+      --err: #b00020;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: radial-gradient(circle at 10% 10%, #eef7f9 0%, var(--bg) 50%);
+      color: var(--text);
+      font-family: "Segoe UI", Tahoma, sans-serif;
+    }
+    header {
+      border-bottom: 1px solid var(--line);
+      background: var(--panel);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .wrap {
+      width: min(960px, 92vw);
+      margin: 0 auto;
+      padding: 1rem 0;
+    }
+    .head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    a:hover { text-decoration: underline; }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 1rem;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+      margin-top: 1rem;
+    }
+    input, textarea, button {
+      font: inherit;
+      padding: 0.55rem 0.65rem;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      width: 100%;
+    }
+    textarea { min-height: 90px; }
+    button {
+      background: #0f766e;
+      color: #fff;
+      border-color: #0f766e;
+      cursor: pointer;
+      width: auto;
+    }
+    button:hover { filter: brightness(0.95); }
+    .ghost {
+      background: #fff;
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 0.75rem;
+      font-size: 0.95rem;
+    }
+    th, td {
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      padding: 0.5rem 0.4rem;
+      vertical-align: top;
+    }
+    .muted { color: var(--muted); }
+    .row-inline {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+    .err {
+      border: 1px solid #ef9a9a;
+      color: var(--err);
+      background: #fff2f4;
+      border-radius: 8px;
+      padding: 0.6rem 0.75rem;
+      margin: 0.75rem 0;
+    }
+    .ok {
+      border: 1px solid #9dd8ad;
+      color: var(--ok);
+      background: #effcf2;
+      border-radius: 8px;
+      padding: 0.6rem 0.75rem;
+      margin: 0.75rem 0;
+    }
+    .inline {
+      display: inline;
+    }
+    @media (max-width: 640px) {
+      .row-inline { grid-template-columns: 1fr; }
+      th, td { font-size: 0.9rem; }
+    }
+  </style>
+</head>
+<body>
+<header>
+  <div class="wrap head">
+    <strong>FragranceTrackGo</strong>
+    <nav>
+      {{if .IsAuthed}}
+      <span class="muted">Signed in as <strong>{{.UserName}}</strong></span>
+      <a href="/fragrances">All Fragrances</a>
+      <a href="/my-fragrances">My Fragrances</a>
+      <form class="inline" method="post" action="/auth/logout">
+        <button class="ghost" type="submit">Logout</button>
+      </form>
+      {{else}}
+      <a href="/auth">Login / Register</a>
+      {{end}}
+    </nav>
+  </div>
+</header>
+<main class="wrap">
+{{end}}
+
+{{define "base_bottom"}}
+</main>
+</body>
+</html>
+{{end}}

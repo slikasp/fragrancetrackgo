@@ -1,0 +1,32 @@
+{{define "fragrances_page"}}
+{{template "base_top" .}}
+
+<section class="card">
+  <h2>All Fragrances</h2>
+  <p class="muted">Search the remote fragrance database and add entries to your personal collection.</p>
+  <label for="fragrance-search">Search</label>
+  <input id="fragrance-search" name="q" value="{{.Query}}" placeholder="brand or fragrance name"
+         hx-get="/fragrances/search"
+         hx-trigger="input changed delay:300ms"
+         hx-target="#fragrance-results"
+         hx-swap="innerHTML">
+
+  <div id="fragrance-feedback"></div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Brand</th>
+        <th>Name</th>
+        <th>Source</th>
+        <th>Add</th>
+      </tr>
+    </thead>
+    <tbody id="fragrance-results">
+      {{template "fragrance_rows" .}}
+    </tbody>
+  </table>
+</section>
+
+{{template "base_bottom" .}}
+{{end}}

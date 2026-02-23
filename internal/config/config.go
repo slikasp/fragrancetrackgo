@@ -4,23 +4,23 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/google/uuid"
-	"github.com/slikasp/fragrancetrackgo/internal/database"
 )
 
 const configFileName = "appconfig.json"
 
 type Config struct {
-	UserDbURL      string    `json:"user_db_url"`
-	FragranceDbURL string    `json:"fragrance_db_url"`
-	CurrentUser    uuid.UUID `json:"current_user"`
+	LocalDbURL  string    `json:"local_db_url"`
+	RemoteDbURL string    `json:"remote_db_url"`
+	CurrentUser uuid.UUID `json:"current_user"`
 }
 
-type State struct {
-	Users      *database.Queries
-	Fragrances *database.Queries
-	Cfg        *Config
+type configJSON struct {
+	LocalDbURL  string `json:"local_db_url"`
+	RemoteDbURL string `json:"remote_db_url"`
+	CurrentUser string `json:"current_user"`
 }
 
 func getConfigFilePath() (string, error) {
@@ -47,31 +47,22 @@ func Read() (Config, error) {
 
 	// Parse and return the Config struct
 	decoder := json.NewDecoder(file)
-	cfg := Config{}
-	err = decoder.Decode(&cfg)
+	raw := configJSON{}
+	err = decoder.Decode(&raw)
 	if err != nil {
 		return Config{}, err
 	}
 
+	cfg := Config{
+		LocalDbURL:  raw.LocalDbURL,
+		RemoteDbURL: raw.RemoteDbURL,
+		CurrentUser: uuid.Nil,
+	}
+	if strings.TrimSpace(raw.CurrentUser) != "" {
+		if parsed, parseErr := uuid.Parse(raw.CurrentUser); parseErr == nil {
+			cfg.CurrentUser = parsed
+		}
+	}
+
 	return cfg, nil
-}
-
-func (c Config) SetUser(user uuid.UUID) error {
-
-	// Set the user variable to input
-	c.CurrentUser = user
-	// Update the config file
-	j, err := json.Marshal(c)
-	if err != nil {
-		return err
-	}
-	path, err := getConfigFilePath()
-	if err != nil {
-		return err
-	}
-	err = os.WriteFile(path, j, 0777)
-	if err != nil {
-		return err
-	}
-	return nil
 }

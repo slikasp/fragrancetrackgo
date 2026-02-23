@@ -1,8 +1,17 @@
 version: "2"
 sql:
-  - schema: "sql/schema"
-    queries: "sql/queries"
-    engine: "postgresql"
+  - engine: "postgresql"
+    schema: "sql/schema/local"
+    queries: "sql/queries/local"
     gen:
       go:
-        out: "internal/database"
+        package: "localDatabase"
+        out: "internal/database/localDatabase"
+
+  - engine: "postgresql"
+    schema: "sql/schema/remote/fragrances.sql"
+    queries: "sql/queries/remote"
+    gen:
+      go:
+        package: "remoteDatabase"
+        out: "internal/database/remoteDatabase"

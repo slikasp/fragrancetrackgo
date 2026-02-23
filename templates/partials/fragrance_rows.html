@@ -1,0 +1,28 @@
+{{define "fragrance_rows"}}
+{{if .Fragrances}}
+  {{range .Fragrances}}
+  <tr>
+    <td>{{.Brand}}</td>
+    <td>{{.Name}}</td>
+    <td>
+      {{if .URL}}
+      <a href="{{.URL}}" target="_blank" rel="noreferrer">Open</a>
+      {{else}}
+      <span class="muted">N/A</span>
+      {{end}}
+    </td>
+    <td>
+      <form method="post" action="/my-fragrances/add" hx-post="/my-fragrances/add" hx-target="#fragrance-feedback" hx-swap="innerHTML">
+        <input type="hidden" name="brand" value="{{.Brand}}">
+        <input type="hidden" name="name" value="{{.Name}}">
+        <button type="submit">Add</button>
+      </form>
+    </td>
+  </tr>
+  {{end}}
+{{else}}
+<tr>
+  <td colspan="4" class="muted">No fragrances found.</td>
+</tr>
+{{end}}
+{{end}}
