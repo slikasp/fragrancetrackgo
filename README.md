@@ -2,6 +2,9 @@
 
 A GO remake of the python application I made previously, mainly just trying out a new language, but hopefully something I can use keep track of my tried and owned fragrances.
 
+It is functioning, but there are still a lot of improvements that I'm working on.
+
+
 ## How to use
 
 To check how it works go to <still working on hosting it>
@@ -26,21 +29,22 @@ For remote fragrance database you can use the provided read-only connection to m
 
 4. Visit the website that starts
 
+
 ## TODOS
 
 
 <ul> TO DO:
 <li> refine the web interface, add functionality
-<li> add proper tests
-<li> add extra security
+<li> add proper tests for internals (non db/web functions)
+<li> move local database to remote
 <li> find hosting for the web app
+<li> add extra security
 </ul>
-
 
 
 ## Notes
 
-Using my own remote database for a list of fragrances, it is managed by (github.com/slikasp/dbmanagerfrags). Still need to figure out the best way to keep it up to date.
+Used my own remote database for a list of fragrances, it is managed by (github.com/slikasp/dbmanagerfrags). Still need to figure out the best way to keep it up to date and download images.
 
 <ul> Use of AI:
 <li> Most of the HTML templates
