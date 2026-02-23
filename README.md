@@ -1,11 +1,12 @@
 # FragranceTrackGo
 
-A GO remake of the python application I made previously, used it to learn a new language, but also something I can use keep track of my tried and owned fragrances and display them when needed.
+A GO remake of the python application I made previously. It is functioning, but there are still a lot of improvements that I'm working on.
 
-It is functioning, but there are still a lot of improvements that I'm working on.
+## Motivation
 
+I recently discovered a world of fragrances and wanted to keep track of my collection and also fragrances I have tried, after using notes and Google Sheets I thought it's time I learn a new language and make a proper app for myself.
 
-## How to use
+## Quick Start
 
 <ul> To check how it works go to <still working on hosting it>
 <li> Register & login
@@ -14,6 +15,7 @@ It is functioning, but there are still a lot of improvements that I'm working on
 <li> More functionality is being worked on
 </ul>
 
+## Usage
 
 <ol> If you want to run it yourself:
 
@@ -37,8 +39,11 @@ For remote fragrance database you can use the provided read-only connection to m
 
 </ol>
 
-## TODOS
+## Contributing
 
+Currently I plan to develop it myself and learn more doing it.
+
+## TODOS
 
 <ul> TO DO:
 <li> refine the web interface, add functionality
