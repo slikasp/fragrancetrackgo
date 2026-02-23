@@ -8,13 +8,12 @@ To use the app just go to <still working on it>, register, login and look for a 
 
 If you want to run it yourself:
 
-1. Add config in appconfig.json at the root of the project with these contents:
-{
-    "user_db_url":"<your_local_database_url>",
-    "fragrance_db_url":"postgresql://ftg_readonly.rqjghqqmmmzenutmzveq:menulis@aws-1-eu-central-1.pooler.supabase.com:5432/postgres",
-}
+1. Create appconfig.json file at the root of the project using the _appconfig_template.json file provided:
+You will need to add the local database connection for users/scores.
+For fragrance database you can use the provided read-only connection to my database or create your own (the the dbManagerFragrances project for the schema)
 
-2. Run goose <add exact command> Up migration for local database
+2. Run goose up migration for local database (schema folder):
+goose postgres <user_db_url> up
 
 3. Start the app by <doing what?>
 

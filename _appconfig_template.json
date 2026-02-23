@@ -1,0 +1,5 @@
+{
+    "user_db_url":"postgres://user:pass@localhost:5432/ftg?sslmode=disable",
+    "fragrance_db_url":"postgresql://ftg_readonly.rqjghqqmmmzenutmzveq:menulis@aws-1-eu-central-1.pooler.supabase.com:5432/postgres",
+    "current_user":""
+}
