@@ -11,7 +11,7 @@ I recently discovered a world of fragrances and wanted to keep track of my colle
 <ul> To check how it works go to <still working on hosting it>
 <li> Register & login
 <li> Search for a fragrance you own and add it to your list with your personal score/comment
-<li> View and filter your fragrance list
+<li> View and modify your fragrance list
 <li> More functionality is being worked on
 </ul>
 
@@ -46,8 +46,8 @@ Currently I plan to develop it myself and learn more doing it.
 ## TODOS
 
 <ul> TO DO:
-<li> refine the web interface, add functionality
 <li> add proper tests for internals (non db/web functions)
+<li> make and implement card downloader and add card display (probably in the fragrance manager script)
 <li> move local database to remote
 <li> add functionality for your fragrance list (better sort, most owned/liked notes/accords, coverage of seasons, suggestions)
 <li> find hosting for the web app
@@ -57,7 +57,7 @@ Currently I plan to develop it myself and learn more doing it.
 
 ## Notes
 
-Used my own remote database for a list of fragrances, it is managed by (github.com/slikasp/dbmanagerfrags). Still need to figure out the best way to keep it up to date and download images.
+Used my own remote database for a list of fragrances, it is managed by. Still need to figure out the best way to keep it up to date and download images.
 
 <ul> Use of AI:
 <li> Most of the HTML templates

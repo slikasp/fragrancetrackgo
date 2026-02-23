@@ -2,28 +2,29 @@
 {{template "base_top" .}}
 
 <section class="card">
-  <h2>Account Access</h2>
-  <p class="muted">Create an account or sign in to manage your fragrance collection.</p>
+  <h2>{{if eq .AuthMode "register"}}Create Account{{else}}Welcome Back{{end}}</h2>
+  <p class="muted">
+    {{if eq .AuthMode "register"}}
+    Register to start saving and rating fragrances.
+    {{else}}
+    Sign in to manage your fragrance collection.
+    {{end}}
+  </p>
   <div id="auth-feedback"></div>
-  <div class="grid">
-    <form method="post" action="/auth/login" hx-post="/auth/login" hx-target="#auth-feedback" hx-swap="innerHTML">
-      <h3>Login</h3>
-      <label>Name</label>
-      <input type="text" name="name" required>
-      <label style="margin-top:0.5rem;display:block;">Password</label>
-      <input type="password" name="password" required>
-      <button style="margin-top:0.75rem;" type="submit">Login</button>
-    </form>
-
-    <form method="post" action="/auth/register" hx-post="/auth/register" hx-target="#auth-feedback" hx-swap="innerHTML">
-      <h3>Register</h3>
-      <label>Name</label>
-      <input type="text" name="name" required>
-      <label style="margin-top:0.5rem;display:block;">Password</label>
-      <input type="password" name="password" required>
-      <button style="margin-top:0.75rem;" type="submit">Register</button>
-    </form>
-  </div>
+  <form method="post" action="{{if eq .AuthMode "register"}}/auth/register{{else}}/auth/login{{end}}" hx-post="{{if eq .AuthMode "register"}}/auth/register{{else}}/auth/login{{end}}" hx-target="#auth-feedback" hx-swap="innerHTML">
+    <label>Name</label>
+    <input type="text" name="name" required>
+    <label style="margin-top:0.5rem;display:block;">Password</label>
+    <input type="password" name="password" required>
+    <button style="margin-top:0.75rem;" type="submit">{{if eq .AuthMode "register"}}Register{{else}}Login{{end}}</button>
+  </form>
+  <p class="muted" style="margin-top:1rem;">
+    {{if eq .AuthMode "register"}}
+    Already have an account? <a href="/auth/login">Login</a>
+    {{else}}
+    New here? <a href="/auth/register">Register</a>
+    {{end}}
+  </p>
 </section>
 
 {{template "base_bottom" .}}

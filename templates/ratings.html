@@ -1,0 +1,109 @@
+{{define "my_ratings_page"}}
+{{template "base_top" .}}
+
+<section class="card">
+  <h2>My Ratings</h2>
+  <p class="muted">Manage fragrances saved in your local ratings table.</p>
+
+  <div id="my-ratings-feedback"></div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Brand</th>
+        <th>Name</th>
+        <th>Rating</th>
+        <th>Comment</th>
+        <th class="cell-actions">Actions</th>
+      </tr>
+    </thead>
+    <tbody id="my-ratings-results" hx-get="/my-ratings/list" hx-trigger="load, fragranceAdded from:body, fragranceUpdated from:body, fragranceRemoved from:body" hx-swap="innerHTML">
+      {{template "my_rating_rows" .}}
+    </tbody>
+  </table>
+</section>
+
+<dialog id="edit-rating-dialog">
+  <form id="edit-rating-form" method="post" action="/my-ratings/update" hx-post="/my-ratings/update" hx-target="#my-ratings-feedback" hx-swap="innerHTML">
+    <h3 style="margin-top:0;">Edit Fragrance</h3>
+    <p id="edit-rating-selected" class="muted" style="margin-top:0.25rem;"></p>
+    <input id="edit-rating-brand" type="hidden" name="brand">
+    <input id="edit-rating-name" type="hidden" name="name">
+
+    <div class="row-inline">
+      <div>
+        <label for="edit-rating-score">Score (0-10)</label>
+        <input id="edit-rating-score" type="number" name="rating" min="0" max="10">
+      </div>
+      <div>
+        <label for="edit-rating-comment">Comment</label>
+        <textarea id="edit-rating-comment" name="comment"></textarea>
+      </div>
+    </div>
+
+    <div style="display:flex; gap:0.5rem; margin-top:0.75rem;">
+      <button class="ghost" id="edit-rating-cancel" type="button">Cancel</button>
+      <button type="submit">Save</button>
+    </div>
+  </form>
+</dialog>
+
+<script>
+(() => {
+  const dialog = document.getElementById("edit-rating-dialog");
+  const editForm = document.getElementById("edit-rating-form");
+  const selected = document.getElementById("edit-rating-selected");
+  const brandInput = document.getElementById("edit-rating-brand");
+  const nameInput = document.getElementById("edit-rating-name");
+  const scoreInput = document.getElementById("edit-rating-score");
+  const commentInput = document.getElementById("edit-rating-comment");
+  const cancelBtn = document.getElementById("edit-rating-cancel");
+
+  document.body.addEventListener("click", (event) => {
+    const btn = event.target.closest(".edit-rating-btn");
+    if (!btn) {
+      return;
+    }
+
+    const brand = String(btn.dataset.brand || "").trim();
+    const name = String(btn.dataset.name || "").trim();
+    if (!brand || !name) {
+      return;
+    }
+
+    brandInput.value = brand;
+    nameInput.value = name;
+    scoreInput.value = String(btn.dataset.rating || "");
+    commentInput.value = String(btn.dataset.comment || "");
+    selected.textContent = brand + " - " + name;
+
+    if (typeof dialog.showModal === "function") {
+      dialog.showModal();
+      return;
+    }
+    dialog.setAttribute("open", "open");
+  });
+
+  cancelBtn.addEventListener("click", () => {
+    if (typeof dialog.close === "function") {
+      dialog.close();
+      return;
+    }
+    dialog.removeAttribute("open");
+  });
+
+  document.body.addEventListener("htmx:afterRequest", (event) => {
+    if (event.detail.elt !== editForm || !event.detail.successful) {
+      return;
+    }
+    if (typeof dialog.close === "function") {
+      dialog.close();
+      return;
+    }
+    dialog.removeAttribute("open");
+  });
+})();
+</script>
+
+{{template "base_bottom" .}}
+{{end}}

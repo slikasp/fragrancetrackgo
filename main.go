@@ -2,12 +2,14 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 
 	_ "github.com/lib/pq"
 	"github.com/slikasp/fragrancetrackgo/internal/config"
 	"github.com/slikasp/fragrancetrackgo/internal/database/localDatabase"
 	"github.com/slikasp/fragrancetrackgo/internal/database/remoteDatabase"
+	"github.com/slikasp/fragrancetrackgo/web"
 )
 
 func main() {
@@ -38,14 +40,16 @@ func main() {
 	fragranceQueries := remoteDatabase.New(fragranceDB)
 
 	// Create a webapp which holds current state and HTML templates
-	app, err := newWebApp(userQueries, fragranceQueries)
+	app, err := web.New(userQueries, fragranceQueries)
 	if err != nil {
 		log.Fatalf("failed to initialize templates: %v", err)
 	}
 
 	// Start web server
-	err = app.serve(":8080")
+	fmt.Printf("FragranceTrackGo web server starting...")
+	err = app.Serve(":8080")
 	if err != nil {
 		log.Fatal(err)
 	}
+
 }

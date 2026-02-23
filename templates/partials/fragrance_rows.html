@@ -12,7 +12,7 @@
       {{end}}
     </td>
     <td>
-      <form method="post" action="/my-fragrances/add" hx-post="/my-fragrances/add" hx-target="#fragrance-feedback" hx-swap="innerHTML">
+      <form class="quick-add-form" method="post" action="/my-ratings/add">
         <input type="hidden" name="brand" value="{{.Brand}}">
         <input type="hidden" name="name" value="{{.Name}}">
         <button type="submit">Add</button>

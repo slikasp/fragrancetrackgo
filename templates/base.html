@@ -126,6 +126,42 @@
     .inline {
       display: inline;
     }
+    .cell-actions {
+      text-align: right;
+      white-space: nowrap;
+      width: 1%;
+    }
+    .icon-btn {
+      width: 1.8rem;
+      height: 1.8rem;
+      padding: 0;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--accent);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .icon-btn svg {
+      width: 0.9rem;
+      height: 0.9rem;
+      fill: currentColor;
+    }
+    .icon-btn:hover {
+      background: #e8f5f6;
+      border-color: var(--accent);
+    }
+    .action-inline {
+      margin-left: 0.35rem;
+    }
+    .danger-icon-btn {
+      color: #b22a2a;
+    }
+    .danger-icon-btn:hover {
+      background: #fdecec;
+      border-color: #b22a2a;
+    }
     @media (max-width: 640px) {
       .row-inline { grid-template-columns: 1fr; }
       th, td { font-size: 0.9rem; }
@@ -140,12 +176,12 @@
       {{if .IsAuthed}}
       <span class="muted">Signed in as <strong>{{.UserName}}</strong></span>
       <a href="/fragrances">All Fragrances</a>
-      <a href="/my-fragrances">My Fragrances</a>
+      <a href="/my-ratings">My Ratings</a>
       <form class="inline" method="post" action="/auth/logout">
         <button class="ghost" type="submit">Logout</button>
       </form>
       {{else}}
-      <a href="/auth">Login / Register</a>
+      <a href="/auth/login">Login</a>
       {{end}}
     </nav>
   </div>
@@ -155,6 +191,21 @@
 
 {{define "base_bottom"}}
 </main>
+<script>
+  document.body.addEventListener("htmx:beforeSwap", function (evt) {
+    var xhr = evt.detail.xhr;
+    if (!xhr) {
+      return;
+    }
+
+    var status = xhr.status;
+    if (status >= 400 && status < 500 && !xhr.getResponseHeader("HX-Redirect")) {
+      // Allow user-facing 4xx fragments to render in hx-target containers.
+      evt.detail.shouldSwap = true;
+      evt.detail.isError = false;
+    }
+  });
+</script>
 </body>
 </html>
 {{end}}

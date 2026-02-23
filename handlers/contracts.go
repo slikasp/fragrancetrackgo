@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 
 	"github.com/google/uuid"
@@ -30,11 +29,4 @@ type RatingStore interface {
 	RemoveRating(context.Context, localDatabase.RemoveRatingParams) (localDatabase.Rating, error)
 	UpdateRating(context.Context, localDatabase.UpdateRatingParams) (localDatabase.Rating, error)
 	GetRatings(context.Context, uuid.UUID) ([]localDatabase.Rating, error)
-}
-
-type RatingInput struct {
-	Brand   string
-	Name    string
-	Rating  sql.NullInt32
-	Comment sql.NullString
 }

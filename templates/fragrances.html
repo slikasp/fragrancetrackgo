@@ -28,5 +28,90 @@
   </table>
 </section>
 
+<dialog id="add-rating-dialog">
+  <form id="add-rating-form" method="post" action="/my-ratings/add" hx-post="/my-ratings/add" hx-target="#fragrance-feedback" hx-swap="innerHTML">
+    <h3 style="margin-top:0;">Add To My Ratings</h3>
+    <p id="add-rating-selected" class="muted" style="margin-top:0.25rem;"></p>
+    <input id="add-rating-brand" type="hidden" name="brand">
+    <input id="add-rating-name" type="hidden" name="name">
+
+    <div class="row-inline">
+      <div>
+        <label for="add-rating-score">Score (0-10)</label>
+        <input id="add-rating-score" type="number" name="rating" min="0" max="10">
+      </div>
+      <div>
+        <label for="add-rating-comment">Comment</label>
+        <textarea id="add-rating-comment" name="comment"></textarea>
+      </div>
+    </div>
+
+    <div style="display:flex; gap:0.5rem; margin-top:0.75rem;">
+      <button class="ghost" id="add-rating-cancel" type="button">Cancel</button>
+      <button type="submit">Add</button>
+    </div>
+  </form>
+</dialog>
+
+<script>
+(() => {
+  const dialog = document.getElementById("add-rating-dialog");
+  const addForm = document.getElementById("add-rating-form");
+  const selected = document.getElementById("add-rating-selected");
+  const brandInput = document.getElementById("add-rating-brand");
+  const nameInput = document.getElementById("add-rating-name");
+  const scoreInput = document.getElementById("add-rating-score");
+  const commentInput = document.getElementById("add-rating-comment");
+  const cancelBtn = document.getElementById("add-rating-cancel");
+
+  document.body.addEventListener("submit", (event) => {
+    const quickAddForm = event.target.closest(".quick-add-form");
+    if (!quickAddForm) {
+      return;
+    }
+
+    event.preventDefault();
+    const formData = new FormData(quickAddForm);
+    const brand = String(formData.get("brand") || "").trim();
+    const name = String(formData.get("name") || "").trim();
+    if (!brand || !name) {
+      return;
+    }
+
+    brandInput.value = brand;
+    nameInput.value = name;
+    scoreInput.value = "";
+    commentInput.value = "";
+    selected.textContent = brand + " - " + name;
+
+    if (typeof dialog.showModal === "function") {
+      dialog.showModal();
+      return;
+    }
+    dialog.setAttribute("open", "open");
+  });
+
+  cancelBtn.addEventListener("click", () => {
+    if (typeof dialog.close === "function") {
+      dialog.close();
+      return;
+    }
+    dialog.removeAttribute("open");
+  });
+
+  document.body.addEventListener("htmx:afterRequest", (event) => {
+    if (event.detail.elt !== addForm || !event.detail.successful) {
+      return;
+    }
+    addForm.reset();
+    if (typeof dialog.close === "function") {
+      dialog.close();
+      return;
+    }
+    dialog.removeAttribute("open");
+  });
+})();
+</script>
+
 {{template "base_bottom" .}}
 {{end}}

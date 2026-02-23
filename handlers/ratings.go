@@ -11,6 +11,13 @@ import (
 	"github.com/slikasp/fragrancetrackgo/internal/database/localDatabase"
 )
 
+type RatingInput struct {
+	Brand   string
+	Name    string
+	Rating  sql.NullInt32
+	Comment sql.NullString
+}
+
 // create a new user-owned rating entry. Flow:
 // 1. Normalize brand/name (trim + lowercase) so lookups are consistent.
 // 2. Validate required keys.
@@ -52,6 +59,12 @@ func RatingAdd(ctx context.Context, store RatingStore, userID uuid.UUID, input R
 
 // delete one rating identified by (user, brand, name) and return it
 func RatingRemove(ctx context.Context, store RatingStore, userID uuid.UUID, brand, name string) (localDatabase.Rating, error) {
+	brand = strings.ToLower(strings.TrimSpace(brand))
+	name = strings.ToLower(strings.TrimSpace(name))
+	if brand == "" || name == "" {
+		return localDatabase.Rating{}, ErrInvalidInput
+	}
+
 	removedFrag, err := store.RemoveRating(ctx, localDatabase.RemoveRatingParams{
 		UserID: userID,
 		Brand:  brand,
