@@ -4,26 +4,28 @@ A GO remake of the python application I made previously, mainly just trying out 
 
 ## How to use
 
-To use the app just go to <still working on it>, register, login and look for a fragrance, add to your collection.
+To check how it works go to <still working on hosting it>
 
 If you want to run it yourself:
 
+0. Clone the project
+`git clone https://github.com/slikasp/fragrancetrackgo`
+
 1. Create appconfig.json file at the root of the project using the _appconfig_template.json file provided:
 You will need to add the local database connection for users/scores.
-For fragrance database you can use the provided read-only connection to my database or create your own (the the dbManagerFragrances project for the schema)
+For remote fragrance database you can use the provided read-only connection to my database or create your own (the the dbManagerFragrances project for the schema)
 
 2. Run goose up migration for local database (schema folder):
-goose postgres <user_db_url> up
+`goose postgres <local_db_url> up`
 
-3. Start the app by <doing what?>
+3. Start the app
+`go run .`
+
+4. Visit the website that starts
 
 ## TODOS
 
-- add web interface (simple)
-
-- add actual user authentication
-
-- refine CLI interface so I could use it to manage the app?
+- refine the web interface, add functionality
 
 - add proper tests
 
